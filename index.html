@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -429,9 +429,14 @@ function compute(cs){
  if(pat?.bias)pat.bias>0?(bull+=2,det.push({e:' ',t:pat.n+' (Bull)',s:'bull'})):(bear+=2,det.push({e:' ',t:pat.n+' (Bear)',s:'bear'}));
  det.push({e:sess.s>=0.9?' ':' ',t:sess.n,s:'neu'});
  const ba=bull*sess.s,bra=bear*sess.s;
+ const diff=ba-bra;
  let sig='WAIT',dir=' ',conf=0;
- if(ba>=10&&ba>bra+3){sig='CALL';dir=' ';conf=Math.min(97,Math.round((ba/32)*100)+18);}
- else if(bra>=10&&bra>ba+3){sig='PUT';dir=' ';conf=Math.min(97,Math.round((bra/32)*100)+18);}
+ if(ba>=9&&diff>=2){sig='CALL';dir=' ';conf=Math.min(97,Math.round((ba/32)*100)+18);}
+ else if(bra>=9&&diff<=-2){sig='PUT';dir=' ';conf=Math.min(97,Math.round((bra/32)*100)+18);}
+ else if(Math.abs(diff)>=3&&Math.max(ba,bra)>=6){
+ sig=diff>0?'CALL':'PUT';
+ conf=Math.min(75,Math.round((Math.max(ba,bra)/32)*100)+10);
+ }
  return{sig,dir,conf,bull:Math.round(bull),bear:Math.round(bear),rsi:lr,stK,stD,le9,le21,le50,vw,sess,det,ct:cs.length,lc};
 }
 
